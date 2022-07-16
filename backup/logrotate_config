@@ -5,7 +5,6 @@
     delaycompress
     missingok
     size 10M
-    dateext
     create
     postrotate
         date +%T | sudo tee /opt/student_rotate.log

@@ -19,4 +19,4 @@ PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 25 6    * * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.daily )
 47 6    * * 7   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.weekly )
 52 6    1 * *   root    test -x /usr/sbin/anacron || ( cd / && run-parts --report /etc/cron.monthly )
-0 * * * * user-backup find /opt/backup/ -name sausage-store -type f -mmin +1800 -delete
+0 * * * * user-backup cd /opt/backup && ls -t | tail -n +31 | xargs rm -rf --
