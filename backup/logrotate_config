@@ -1,0 +1,12 @@
+/opt/log/sausage_store.log {
+    rotate 3
+    hourly
+    compress
+    delaycompress
+    missingok
+    size 10M
+    create
+    postrotate
+        date +%T | sudo tee /opt/student_rotate.log
+    endscript
+}
