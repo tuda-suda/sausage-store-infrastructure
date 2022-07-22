@@ -1,5 +1,4 @@
 ansible_connection: ssh
-sausage_store_version: 1.0.104304
 backend_server_port: 8088
 nexus_url: https://nexus.praktikum-services.ru
 nexus_user: !vault |

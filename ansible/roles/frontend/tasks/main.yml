@@ -1,27 +1,38 @@
-- name: Install npm & nodejs
+- name: Install dependencies
   shell: |
     curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - && sudo apt-get install -y nodejs
+    npm install --global http-server
+
+- name: Allow {{ frontend_service_user }} to run http-server as sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^{{ frontend_service_user }}"
+    line: "{{ frontend_service_user }} ALL=(root) NOPASSWD:/usr/bin/http-server"
+    validate: 'visudo -cf %s'
 
 - name: Add service user
   user:
-    name: {{ frontend_service_user }}
+    name: "{{ frontend_service_user }}"
     create_home: no
     shell: /sbin/nologin
 
 - name: Create service directory
   shell: |
     mkdir -m 0755 {{ frontend_service_directory }}
-    sudo chown {{ frontend_service_directory }} {{ frontend_service_user }}:{{ frontend_service_user_group }}
+    mkdir -m 0755 -p {{ frontend_service_directory }}/dist/frontend
+    sudo chown -R {{ frontend_service_user }}:{{ frontend_service_user_group }} {{ frontend_service_directory }}
 
 - name: Donwload frontend artifact from Nexus
   get_url:
     dest: "{{ frontend_service_directory }}/sausage-store.tar.gz"
-    url: "{{ nexus_url }}/repository/sausage-store-gumerov-marat-backend/{{ frontend_version }}/sausage-store-{{ frontend_version }}.tar.gz"
-    url_username: {{ nexus_user }}
-    url_password: {{ nexus_pass }}
+    url: "{{ nexus_url }}/repository/sausage-store-gumerov-marat-frontend/sausage-store/{{ frontend_version }}/sausage-store-{{ frontend_version }}.tar.gz"
+    url_username: "{{ nexus_user }}"
+    url_password: "{{ nexus_pass }}"
 
 - name: Untar frontend
   shell: |
+    cd "{{ frontend_service_directory }}"
     sudo tar -xzvf sausage-store.tar.gz
     sudo chown -R {{ frontend_service_user }}:{{ frontend_service_user_group }} frontend
     sudo cp -rf frontend/. {{ frontend_service_directory }}/dist/frontend/
@@ -38,4 +49,4 @@
 - name: Start frontend service
   service:
     name: sausage-store-frontend
-    state: running
+    state: started

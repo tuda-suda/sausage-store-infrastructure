@@ -1,0 +1,5 @@
+backend_maven_version: 1.0.104965
+backend_service_user: jarservice
+backend_service_directory: /var/{{ backend_service_user }}
+backend_report_directory: "{{ backend_service_directory }}/reports"
+backend_lib_directory: "{{ backend_service_directory }}/lib"

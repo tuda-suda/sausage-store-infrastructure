@@ -1,12 +1,18 @@
 - name: Install OpenJDK-16
-  package:
+  apt:
     name: openjdk-16-jdk
 
 - name: Add service user
   user:
-    name: {{ backend_service_user }}
+    name: "{{ backend_service_user }}"
     create_home: no
     shell: /sbin/nologin
+
+- name: Create service directory
+  shell: |
+    mkdir -m 0755 -p {{ backend_lib_directory }}
+    mkdir -m 0755 -p {{ backend_report_directory }}
+    sudo chown -R {{ backend_service_user }} {{ backend_service_directory }}
 
 - name: Donwload backend artifact from Nexus
   maven_artifact:
@@ -14,9 +20,10 @@
     repository_url: "{{ nexus_url }}/repository/sausage-store-gumerov-marat-backend/"
     group_id: "com.yandex.practicum.devops"
     artifact_id: "sausage-store"
-    version: {{ backend_maven_version }}
-    username: {{ nexus_user }}
-    password: {{ nexus_pass }}
+    version: "{{ backend_maven_version }}"
+    username: "{{ nexus_user }}"
+    password: "{{ nexus_pass }}"
+    owner: "{{ backend_service_user }}"
 
 - name: Create backend systemd-unit file from template
   template:
@@ -30,4 +37,4 @@
 - name: Start backend service
   service:
     name: sausage-store-backend
-    state: running
+    state: started
