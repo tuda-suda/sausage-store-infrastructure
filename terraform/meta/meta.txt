@@ -1,7 +1,6 @@
 #cloud-config
 users:
   - name: ansible
-    groups: ansible
     shell: /bin/bash
     lock_passwd: true
     sudo:  ALL=(ALL) NOPASSWD:ALL
