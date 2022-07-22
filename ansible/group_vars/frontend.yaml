@@ -1,0 +1,4 @@
+frontend_version: {{ sausage_store_version }}
+frontend_service_user: www-data
+frontend_service_user_group: www-data
+frontend_service_directory: /var/{{ frontend_service_user }}

@@ -1,0 +1,10 @@
+---
+- name: Start Sausage Store backend
+  hosts: dev
+  roles:
+    - sausage-store-backend
+
+- name: Start Sausage Store frontend
+  hosts: dev
+  roles:
+    - sausage-store-frontend
