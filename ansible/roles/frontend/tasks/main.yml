@@ -1,0 +1,41 @@
+- name: Install npm & nodejs
+  shell: |
+    curl -sL https://deb.nodesource.com/setup_16.x | sudo -E bash - && sudo apt-get install -y nodejs
+
+- name: Add service user
+  user:
+    name: {{ frontend_service_user }}
+    create_home: no
+    shell: /sbin/nologin
+
+- name: Create service directory
+  shell: |
+    mkdir -m 0755 {{ frontend_service_directory }}
+    sudo chown {{ frontend_service_directory }} {{ frontend_service_user }}:{{ frontend_service_user_group }}
+
+- name: Donwload frontend artifact from Nexus
+  get_url:
+    dest: "{{ frontend_service_directory }}/sausage-store.tar.gz"
+    url: "{{ nexus_url }}/repository/sausage-store-gumerov-marat-backend/{{ frontend_version }}/sausage-store-{{ frontend_version }}.tar.gz"
+    url_username: {{ nexus_user }}
+    url_password: {{ nexus_pass }}
+
+- name: Untar frontend
+  shell: |
+    sudo tar -xzvf sausage-store.tar.gz
+    sudo chown -R {{ frontend_service_user }}:{{ frontend_service_user_group }} frontend
+    sudo cp -rf frontend/. {{ frontend_service_directory }}/dist/frontend/
+
+- name: Create frontend systemd-unit file from template
+  template:
+    src: sausage-store-frontend.service.j2
+    dest: /etc/systemd/system/sausage-store-frontend.service
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Start frontend service
+  service:
+    name: sausage-store-frontend
+    state: running
