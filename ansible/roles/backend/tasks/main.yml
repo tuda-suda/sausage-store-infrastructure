@@ -8,11 +8,23 @@
     create_home: no
     shell: /sbin/nologin
 
-- name: Create service directory
-  shell: |
-    mkdir -m 0755 -p {{ backend_lib_directory }}
-    mkdir -m 0755 -p {{ backend_report_directory }}
-    sudo chown -R {{ backend_service_user }} {{ backend_service_directory }}
+- name: Create lib dierctory
+  file:
+    path: "{{ backend_lib_directory }}"
+    state: directory
+
+- name: Create report directory
+  file:
+    path: "{{ backend_report_directory }}"
+    state: directory
+
+- name: Set {{ backend_service_user }} as owner of service directory
+  file:
+    path: "{{ backend_service_directory }}"
+    state: directory
+    owner: "{{ backend_service_user }}"
+    mode: "0755"
+    recurse: yes
 
 - name: Donwload backend artifact from Nexus
   maven_artifact:
