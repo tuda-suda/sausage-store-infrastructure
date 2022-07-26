@@ -1,0 +1,53 @@
+- include_tasks: install_dependencies.yml
+
+- name: Allow {{ frontend_service_user }} to run http-server with sudo
+  lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: "^{{ frontend_service_user }}"
+    line: "{{ frontend_service_user }} ALL=(root) NOPASSWD:/usr/bin/http-server"
+    validate: 'visudo -cf %s'
+
+- name: Add service user
+  user:
+    name: "{{ frontend_service_user }}"
+    create_home: no
+    shell: /sbin/nologin
+
+- name: Create service dierctory
+  file:
+    path: "{{ frontend_service_directory }}"
+    state: directory
+    owner: "{{ frontend_service_user }}"
+    group: "{{ frontend_service_user_group }}"
+    mode: 0755
+    recurse: yes
+
+- name: Donwload frontend artifact from Nexus
+  get_url:
+    dest: "{{ frontend_service_directory }}/sausage-store.tar.gz"
+    url: "{{ nexus_url }}/repository/sausage-store-gumerov-marat-frontend/sausage-store/{{ frontend_version }}/sausage-store-{{ frontend_version }}.tar.gz"
+    url_username: "{{ nexus_user }}"
+    url_password: "{{ nexus_pass }}"
+
+- name: Untar frontend
+  unarchive:
+    remote_src: yes
+    src: "{{ frontend_service_directory }}/sausage-store.tar.gz"
+    dest: "{{ frontend_service_directory }}"
+    owner: "{{ frontend_service_user }}"
+    group: "{{ frontend_service_user_group }}"
+
+- name: Create frontend systemd-unit file from template
+  template:
+    src: sausage-store-frontend.service.j2
+    dest: /etc/systemd/system/sausage-store-frontend.service
+
+- name: Reload systemd daemon
+  systemd:
+    daemon_reload: yes
+
+- name: Start frontend service
+  service:
+    name: sausage-store-frontend
+    state: started

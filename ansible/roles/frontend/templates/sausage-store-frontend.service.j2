@@ -1,0 +1,10 @@
+[Unit]
+Description=Frontend for sausage-store
+
+[Service]
+User={{ frontend_service_user }}
+ExecStart=sudo http-server {{ frontend_service_directory }}/frontend/ -p 443 --proxy http://localhost:{{ backend_server_port }}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+---
+- name: Prepare environment
+  hosts: dev
+  roles:
+    - env
+
+- name: Start Sausage Store backend
+  hosts: dev
+  roles:
+    - backend
+
+- name: Start Sausage Store frontend
+  hosts: dev
+  roles:
+    - frontend
