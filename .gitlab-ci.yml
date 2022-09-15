@@ -10,6 +10,7 @@ k8s-cluster-deploy:
     - kubectl apply -f kubernetes/backend-report
     - kubectl apply -f kubernetes/frontend
     - kubectl apply -f kubernetes/common/ingress.yaml
+    - rm -f ~/.kube/config
   environment:
     name: sausage-store
     url: https://gumerov-marat-06.k8s.praktikum-services.tech/
