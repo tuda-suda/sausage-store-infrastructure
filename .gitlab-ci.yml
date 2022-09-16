@@ -1,0 +1,19 @@
+stages:
+  - k8s-deploy
+
+k8s-cluster-deploy:
+  stage: k8s-deploy
+  image: bitnami/kubectl:latest
+  script:
+    - echo "${KUBE_CONFIG}" > ~/.kube/config
+    - kubectl apply -f kubernetes/backend
+    - kubectl apply -f kubernetes/backend-report
+    - kubectl apply -f kubernetes/frontend
+    - kubectl apply -f kubernetes/common/ingress.yaml
+    - rm -f ~/.kube/config
+  environment:
+    name: sausage-store
+    url: https://gumerov-marat-06.k8s.praktikum-services.tech/
+  only:
+    changes:
+      - kubernetes/**/*
