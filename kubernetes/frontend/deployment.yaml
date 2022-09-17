@@ -32,3 +32,12 @@ spec:
           name: sausage-store-configmap
       imagePullSecrets:
         - name: docker-config-secret
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: application
+                operator: In
+                values:
+                - front
