@@ -1,19 +1,5 @@
 environment: production
 
-backend:
-  image:
-    repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend
-    tag: latest
-  env:
-    - name: SERVER_PORT
-      value: "8088"
-    - name: SPRING_CLOUD_VAULT_HOST
-      value: 51.250.85.231
-  vault:
-    secret:
-      name: vault
-      key: vault_token
-
 backend-report:
   image:
     repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend-report

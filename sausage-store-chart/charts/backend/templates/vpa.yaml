@@ -2,22 +2,32 @@
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: backend
+  name: {{ .Chart.name }}
+    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.name }}
+    app.kubernetes.io/part-of: sausage-store
+    env: {{ .Values.environment }}
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
-    name: backend
+    name: {{ .Chart.name }}
   updatePolicy:
     updateMode: "Auto"
   resourcePolicy:
     containerPolicies:
       - containerName: "*"
+        {{- with .Values.resources }}
         minAllowed:
-          cpu: 0m
-          memory: 0Mi
+          cpu: {{ .minAllowed.cpu }}
+          memory: {{ .minAllowed.memory }}
         maxAllowed:
-          cpu: 1
-          memory: 500Mi
+          cpu: {{ .maxAllowed.cpu }}
+          memory: {{ .maxAllowed.memory }}
+        {{- end }}
         controlledResources: ["cpu", "memory"]
         controlledValues: RequestsAndLimits

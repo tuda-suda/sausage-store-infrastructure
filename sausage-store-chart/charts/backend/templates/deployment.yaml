@@ -2,41 +2,51 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend
+  name: {{ .Chart.name }}
   labels:
-    app: backend
+    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.name }}
+    app.kubernetes.io/part-of: sausage-store
+    env: {{ .Values.environment }}
 spec:
   revisionHistoryLimit: 15
-  replicas: 5
+  replicas: {{ .Values.replicas }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
-      maxUnavailable: "80%"
-      maxSurge: "20%"
+      maxUnavailable: {{ .Values.rollingUpdate.maxUnavailable }}
+      maxSurge: {{ .Values.rollingUpdate.maxSurge }}
   selector:
     matchLabels:
-      app: backend
+      app.kubernetes.io/name: {{ .Chart.name }}
+      app.kubernetes.io/instance: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
-        app: backend
+        app.kubernetes.io/name: {{ .Chart.name }}
+        app.kubernetes.io/instance: "{{ .Release.Name }}"
     spec:
       containers:
-        - image: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend:latest
-          name: backend
+      {{- with .Values.backend }}
+        - image: {{ .image.repository }}:{{ .image.tag }}
+          name: {{ .Chart.name }}
           imagePullPolicy: IfNotPresent
           env:
-            - name: SERVER_PORT
-              value: "8088"
-            - name: SPRING_CLOUD_VAULT_HOST
-              value: 51.250.85.231
+            {{- range .env }}
+            - name: {{ .name }}
+              value: {{ .value }}
+            {{- end }}
             - name: SPRING_CLOUD_VAULT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: vault
-                  key: vault_token
+                  name: {{ .vault.secret.name }}
+                  key: {{ .vault.secret.key }}
           ports:
-            - name: backend
+            - name: {{ .Chart.name }}
               containerPort: 8088
           livenessProbe:
             httpGet:
@@ -46,5 +56,6 @@ spec:
             periodSeconds: 30
             timeoutSeconds: 2
             failureThreshold: 6
+      {{- end  }}
       imagePullSecrets:
         - name: docker-config-secret

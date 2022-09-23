@@ -1,0 +1,26 @@
+replicas: 5
+rollingUpdate:
+  maxUnavaliable: "80%"
+  maxSurge: "20%"
+
+backend:
+  image:
+    repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend
+    tag: latest
+  env:
+    - name: SERVER_PORT
+      value: "8088"
+    - name: SPRING_CLOUD_VAULT_HOST
+      value: 51.250.85.231
+  vault:
+    secret:
+      name: vault
+      key: vault_token
+
+resources:
+  minAllowed:
+    cpu: 0m
+    memory: 0Mi
+  maxAllowed:
+    cpu: 1
+    memory: 500Mi
