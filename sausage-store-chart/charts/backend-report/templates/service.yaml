@@ -1,13 +1,21 @@
 apiVersion: v1
 kind: Service
 metadata:
-   name: backend-report
+   name: {{ .Chart.name }}
    labels:
-     app: backend-report
+    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.name }}
+    app.kubernetes.io/part-of: sausage-store
+    env: {{ .Values.environment }}
 spec:
   ports:
     - port: 8088
       protocol: TCP
       targetPort: 8088
   selector:
-    app: backend-report
+    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"

@@ -2,20 +2,29 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: backend-report-hpa
+  name: {{ .Chart.name }}
   labels:
-    app: backend-report-hpa
+    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.name }}
+    app.kubernetes.io/part-of: sausage-store
+    env: {{ .Values.environment }}
 spec:
-  minReplicas: 1
-  maxReplicas: 5
+{{- with .Values.hpa }}
+  minReplicas: {{ .minReplicas }}
+  maxReplicas: {{ .maxReplicas }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: backend-report
+    name: {{ .Chart.name }}
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: 75
+          averageUtilization: {{ .metrics.cpuUtilization }}
+{{- end }}
