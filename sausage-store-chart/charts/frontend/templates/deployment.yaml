@@ -2,26 +2,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: frontend
+  name: {{ .Chart.name }}
   labels:
-    app: frontend
+    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.name }}
+    app.kubernetes.io/part-of: sausage-store
+    env: {{ .Values.environment }}
 spec:
-  replicas: 1
   revisionHistoryLimit: 15
+  replicas: {{ .Values.replicas }}
   selector:
     matchLabels:
-      app: frontend
+      app.kubernetes.io/name: {{ .Chart.name }}
+      app.kubernetes.io/instance: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
-        app: frontend
+        app.kubernetes.io/name: {{ .Chart.name }}
+        app.kubernetes.io/instance: "{{ .Release.Name }}"
     spec:
       containers:
-        - name: frontend
-          image: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-frontend:latest
+        - image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+          name: {{ .Chart.name }}
           imagePullPolicy: IfNotPresent
           ports:
-            - name: frontend
+            - name: {{ .Chart.name }}
               containerPort: 80
           volumeMounts:
           - name: nginx-conf
@@ -40,4 +49,4 @@ spec:
               - key: app
                 operator: In
                 values:
-                - frontend
+                - {{ .Chart.name }}

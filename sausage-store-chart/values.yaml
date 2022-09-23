@@ -1,10 +1,5 @@
 environment: production
 
-frontend:
-  image:
-    repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-frontend
-    tag: latest
-
 ingress:
   className: "nginx"
   host: "gumerov-marat-06.k8s.praktikum-services.tech"
