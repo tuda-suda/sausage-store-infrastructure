@@ -1,4 +1,5 @@
-environment: production
+global:
+  environment: production
 
 ingress:
   className: "nginx"

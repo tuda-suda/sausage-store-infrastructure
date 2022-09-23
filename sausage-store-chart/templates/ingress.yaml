@@ -2,23 +2,23 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Chart.name }}-ingress
+  name: {{ .Chart.Name }}-ingress
   labels:
-    app.kubernetes.io/name: {{ .Chart.name }}-ingress
+    app.kubernetes.io/name: {{ .Chart.Name }}-ingress
     app.kubernetes.io/instance: "{{ .Release.Name }}"
     app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
     app.kubernetes.io/managed-by: "{{ .Release.Service }}"
-    helm.sh/chart: "{{ .Chart.name }}-ingress-{{ .Chart.Version }}"
+    helm.sh/chart: "{{ .Chart.Name }}-ingress-{{ .Chart.Version }}"
     app.kubernetes.io/component: ingress
     app.kubernetes.io/part-of: sausage-store
-    env: {{ .Values.environment }}
+    env: {{ .Values.global.environment }}
 spec:
-  ingressClassName: {{ .Chart.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
   tls:
     - hosts:
-        - {{ .Chart.ingress.host }}
+        - {{ .Values.ingress.host }}
   rules:
-    - host: {{ .Chart.ingress.host }}
+    - host: {{ .Values.ingress.host }}
       http:
         paths:
         - path: /

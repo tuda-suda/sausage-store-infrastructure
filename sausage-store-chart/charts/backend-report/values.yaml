@@ -1,4 +1,4 @@
-backend-report:
+backend_report:
   image:
     repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend-report
     tag: latest

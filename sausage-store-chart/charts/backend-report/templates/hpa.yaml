@@ -2,29 +2,27 @@
 apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ .Chart.name }}
+  name: {{ .Chart.Name }}
   labels:
-    app.kubernetes.io/name: {{ .Chart.name }}
+    app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: "{{ .Release.Name }}"
     app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
     app.kubernetes.io/managed-by: "{{ .Release.Service }}"
-    helm.sh/chart: "{{ .Chart.name }}-{{ .Chart.Version }}"
-    app.kubernetes.io/component: {{ .Chart.name }}
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    app.kubernetes.io/component: {{ .Chart.Name }}
     app.kubernetes.io/part-of: sausage-store
-    env: {{ .Values.environment }}
+    env: {{ .Values.global.environment }}
 spec:
-{{- with .Values.hpa }}
-  minReplicas: {{ .minReplicas }}
-  maxReplicas: {{ .maxReplicas }}
+  minReplicas: {{ .Values.hpa.minReplicas }}
+  maxReplicas: {{ .Values.hpa.maxReplicas }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ .Chart.name }}
+    name: {{ .Chart.Name }}
   metrics:
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .metrics.cpuUtilization }}
-{{- end }}
+          averageUtilization: {{ .Values.hpa.metrics.cpuUtilization }}
