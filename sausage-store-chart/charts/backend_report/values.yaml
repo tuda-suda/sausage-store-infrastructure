@@ -1,0 +1,9 @@
+image:
+  repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend-report
+  tag: latest
+
+hpa:
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    cpuUtilization: 75

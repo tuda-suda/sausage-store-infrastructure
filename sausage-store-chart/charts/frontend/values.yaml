@@ -1,0 +1,6 @@
+replicas: 1
+
+frontend:
+  image:
+    repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-frontend
+    tag: latest
