@@ -1,5 +1,36 @@
 global:
   environment: production
+  env:
+  - name: SPRING_CLOUD_VAULT_HOST
+    value: 51.250.85.231
+  vault:
+    secret:
+      name: vault
+      key: vault_token
+  backend:
+    port:
+      internal: &backendPortInternal 8088
+      external: 8088
+
+  backend_report:
+    port:
+      internal: &backendReportPortInternal 8088
+      external: 8088
+
+  frontend:
+    port:
+      internal: 80
+      external: 80
+
+backend:
+  env:
+  - name: SERVER_PORT
+    value: *backendPortInternal
+
+backend_report:
+  env:
+  - name: SERVER_PORT
+    value: *backendReportPortInternal
 
 ingress:
   className: "nginx"

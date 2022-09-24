@@ -14,9 +14,9 @@ metadata:
     env: {{ .Values.global.environment }}
 spec:
   ports:
-    - port: 80
+    - port: {{ .Values.global.frontend.port.external }}
       protocol: TCP
-      targetPort: 80
+      targetPort: {{ .Values.global.frontend.port.internal }}
   selector:
     app.kubernetes.io/name: {{ .Chart.Name }}
     app.kubernetes.io/instance: "{{ .Release.Name }}"

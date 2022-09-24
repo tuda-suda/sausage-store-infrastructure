@@ -7,7 +7,7 @@ data:
   sausage-store.conf: |
     server {
 
-      listen 80;
+      listen {{ .Values.global.frontend.port.external }};
 
       location / {
         root   /usr/share/nginx/html;
@@ -16,6 +16,6 @@ data:
       }
 
       location /api {
-          proxy_pass http://backend:8088;
+          proxy_pass http://backend:{{ .Values.global.backend.port.external }};
       }
     }

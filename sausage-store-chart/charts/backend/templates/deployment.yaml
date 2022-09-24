@@ -32,27 +32,29 @@ spec:
     spec:
       containers:
         - name: {{ .Chart.Name }}
-          {{- with .Values.backend }}
-          image: {{ .image.repository }}:{{ .image.tag }}
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: IfNotPresent
           env:
-            {{- range .env }}
+            {{- range .Values.env }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            {{- range .Values.global.env }}
             - name: {{ .name }}
               value: {{ .value | quote }}
             {{- end }}
             - name: SPRING_CLOUD_VAULT_TOKEN
               valueFrom:
                 secretKeyRef:
-                  name: {{ .vault.secret.name }}
-                  key: {{ .vault.secret.key }}
-          {{- end  }}
+                  name: {{ .Values.global.vault.secret.name }}
+                  key: {{ .Values.global.vault.secret.key }}
           ports:
             - name: {{ .Chart.Name }}
-              containerPort: 8088
+              containerPort: {{ .Values.global.backend.port.internal }}
           livenessProbe:
             httpGet:
               path: /actuator/health
-              port: 8088
+              port: {{ .Values.global.backend.port.internal }}
             initialDelaySeconds: 15
             periodSeconds: 30
             timeoutSeconds: 2
