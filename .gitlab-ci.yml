@@ -1,19 +1,22 @@
 stages:
-  - k8s-deploy
+  - release
+  - deploy
 
-k8s-cluster-deploy:
-  stage: k8s-deploy
-  image: bitnami/kubectl:latest
+variables:
+  CHART_VERSION: 0.1.1
+
+release-helm-chart:
+  stage: release
+  image: alpine/helm:3.10.0
   script:
-    - echo "${KUBE_CONFIG}" > ~/.kube/config
-    - kubectl apply -f kubernetes/backend
-    - kubectl apply -f kubernetes/backend-report
-    - kubectl apply -f kubernetes/frontend
-    - kubectl apply -f kubernetes/common/ingress.yaml
-    - rm -f ~/.kube/config
-  environment:
-    name: sausage-store
-    url: https://gumerov-marat-06.k8s.praktikum-services.tech/
+    - helm package sausage-store-chart
+    - curl -u ${NEXUS_USER}:${NEXUS_PASS} ${NEXUS_URL}/repository/sausage-store-helm-marat-gumerov-06/ --upload-file sausage-store-${CHART_VERSION}.tgz
   only:
     changes:
-      - kubernetes/**/*
+      - sausage-store-chart/**/*
+
+install-helm-chart:
+  stage: deploy
+  image: argoproj/argocd:v2.3.3
+  script:
+    - argocd app sync sausage-store-m-gumerov --grpc-web --auth-token $ARGO_TOKEN --server $ARGO_SERVER
