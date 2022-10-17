@@ -1,6 +1,6 @@
 image:
   repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend-report
-  tag: latest
+  tag: 16cdf69191ed435490d10e06664be30f3cb4e9d1
 
 hpa:
   minReplicas: 1
