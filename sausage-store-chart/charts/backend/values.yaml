@@ -1,7 +1,7 @@
-replicas: 3
+replicas: 2
 rollingUpdate:
-  maxUnavaliable: "80%"
-  maxSurge: "20%"
+  maxUnavaliable: 1
+  maxSurge: 1
 
 image:
   repository: gitlab.praktikum-services.ru:5050/m.gumerov/sausage-store/sausage-backend
@@ -13,4 +13,4 @@ resources:
     memory: 0Mi
   maxAllowed:
     cpu: 1
-    memory: 500Mi
+    memory: 1.5Gi

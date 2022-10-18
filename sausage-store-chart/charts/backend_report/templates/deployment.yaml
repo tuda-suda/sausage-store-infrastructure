@@ -49,7 +49,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: {{ .Values.global.backend_report.port.internal }}
-            initialDelaySeconds: 15
+            initialDelaySeconds: 45
             periodSeconds: 30
             timeoutSeconds: 2
             failureThreshold: 6
