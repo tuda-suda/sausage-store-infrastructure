@@ -1,0 +1,25 @@
+---
+groups:
+  - name: Sausage store rules
+    rules:
+    - alert: BackendInstanceDown
+      expr: up{app_kubernetes_io_name="backend"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        project: "sausage_store"
+        component: "Backend"
+    - alert: BackendReportInstanceDown
+      expr: up{app_kubernetes_io_name="backend-report"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        project: "sausage_store"
+        component: "Backend-report"
+    - alert: FrontendInstanceDown
+      expr: up{app_kubernetes_io_name="frontend"} == 0
+      for: 1m
+      labels:
+        severity: critical
+        project: "sausage_store"
+        component: "Frontend"
