@@ -28,7 +28,6 @@ spec:
       containers:
         - image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
           name: {{ .Chart.Name }}
-          imagePullPolicy: IfNotPresent
           ports:
             - name: {{ .Chart.Name }}
               containerPort: {{ .Values.global.frontend.port.internal }}
