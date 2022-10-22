@@ -3,5 +3,5 @@ type: application
 name: backend
 description: Sausage Store backend Helm Chart
 
-version: 0.1.3
+version: 0.1.4
 appVersion: "latest"
