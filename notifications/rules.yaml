@@ -23,3 +23,21 @@ groups:
         severity: critical
         project: "sausage_store"
         component: "Frontend"
+    - alert: ActuatorPrometheusErrors
+      expr: max(sum(rate(http_server_requests_seconds_count{uri="/actuator/prometheus", status=~"[45].."}[2m]))) > 0
+      for: 5m
+      labels:
+        severity: critical
+        project: "sausage_store"
+    - alert: Error500ForBackend
+      expr: max(sum(rate(http_server_requests_seconds_count{uri=~"/api/.*", status="500"}[5m]))) > 0
+      for: 5m
+      labels:
+        severity: critical
+        project: "sausage_store"
+    - alert: SuccessfulPOSTtoOrdersTooLong
+      expr: max(histogram_quantile(0.95, rate(http_server_requests_seconds_bucket{method="POST", uri="/api/orders", status!="[45].."}[5m]))) > 0.1
+      for: 5m
+      labels:
+        severity: critical
+        project: "sausage_store"
